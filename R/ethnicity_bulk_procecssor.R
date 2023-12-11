@@ -35,7 +35,7 @@ process_graph_saver(plot=graph_placeholder,
                     scaling = 0.5
 )
 
-graph_placeholder <- facet_sources_ethnicity_deprivation(prawn_path = prawn_path,
+graph_placeholder <- facet_sources_ethnicity_decile(prawn_path = prawn_path,
                                                          pollutant= pollutant,
                                                          year=year)
 process_graph_saver(plot=graph_placeholder,
@@ -43,7 +43,7 @@ process_graph_saver(plot=graph_placeholder,
                                       pollutant,
                                       " emissions in ",
                                       year,
-                                      "faceted by source, coloured by ethnicity, x deprivation.png"),
+                                      "faceted by source, coloured by ethnicity, x decile.png"),
                     file_format = "agg_png",
                     type = 2,
                     scaling = 0.5
