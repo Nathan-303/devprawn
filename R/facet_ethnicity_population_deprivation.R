@@ -19,7 +19,9 @@
 facet_ethnicity_sources_weighted <- function(prawn_path,pollutant,year){
 
 
-
+  active_stack <- read.csv(file=prawn_path,
+                           check.names = FALSE,
+                           row.names = 1)
 edata <- read.csv("Data/LSOA_statistics/census2021-ts021-lsoa.csv",
                   check.names=FALSE,
                   sep="|") %>%
@@ -60,18 +62,10 @@ edata <- read.csv("Data/LSOA_statistics/census2021-ts021-lsoa.csv",
 
 
 weightchunk <- inner_join(active_stack,edata,by=c("LSOA11CD"="geography code")) %>%
-  dplyr::select(LSOA11CD,`Ethnic group`,Emission_source,IMD,Emissions,flat_population,groupid) %>%
   group_by(`Ethnic group`,IMD)
 
 plottable <- weightchunk %>%
   summarise(popsum=sum(flat_population),id=mean(groupid))
-
-process_graph_saver(plot=last_plot(),
-                    filename = "testing123.png",
-                    file_format = "agg_png",
-                    type = 2,
-                    scaling = 0.7
-)
 
 #facet by sources not ethnicity
 plottable2 <- plottable %>% dplyr::filter(`Ethnic group`%in%c("Black, Black British, Black\nWelsh, Caribbean or African",
