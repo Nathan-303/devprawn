@@ -16,7 +16,7 @@
 #'   pollutant="NOx",
 #'   year=2019)
 
-cartesian_ethnicity_emissions_deprivation_weighted <- function(prawn_path,pollutant,year){
+cartesian_deprivation_emissions_ethnicity <- function(prawn_path,pollutant,year){
 data <- read.csv(prawn_path,
                  row.names=1,
                  check.names=FALSE)
@@ -124,7 +124,7 @@ reference <- indexed_data %>% dplyr::filter(`Ethnic group`=="White: English, Wel
 #   mutate(percentage=`Weighted emissions`/majority)
 # 
 # write.csv(x=output_table,file = paste0(pollutant,"emission averages.csv"))
-# output <- ggplot(data=indexed_data)+
+output <- ggplot(data=indexed_data)+
 
   #Set the standard variables
   aes(x=`Weighted deprivation`,
