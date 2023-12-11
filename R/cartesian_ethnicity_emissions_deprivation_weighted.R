@@ -120,11 +120,11 @@ point_size=case_when(
 reference <- indexed_data %>% dplyr::filter(`Ethnic group`=="White: English, Welsh, Scottish,\nNorthern Irish or British") %>% 
   rename("majority"="Weighted emissions")
 
-output_table <- indexed_data %>% mutate(majority=reference$majority) %>% 
-  mutate(percentage=`Weighted emissions`/majority)
-
-write.csv(x=output_table,file = paste0(pollutant,"emission averages.csv"))
-output <- ggplot(data=indexed_data)+
+# output_table <- indexed_data %>% mutate(majority=reference$majority) %>% 
+#   mutate(percentage=`Weighted emissions`/majority)
+# 
+# write.csv(x=output_table,file = paste0(pollutant,"emission averages.csv"))
+# output <- ggplot(data=indexed_data)+
 
   #Set the standard variables
   aes(x=`Weighted deprivation`,
