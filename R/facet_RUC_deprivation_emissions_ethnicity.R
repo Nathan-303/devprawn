@@ -16,7 +16,7 @@
 #'   pollutant="NOx",
 #'   year=2019)
 
-facet_RUC_ethnicity_deprivation <- function(prawn_path,pollutant,year){
+facet_RUC_deprivation_emissions_ethnicity <- function(prawn_path,pollutant,year){
 active_stack <- read.csv(file=prawn_path,
                          check.names = FALSE,
                          row.names = 1)

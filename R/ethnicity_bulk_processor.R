@@ -59,3 +59,31 @@ process_graph_saver(plot=graph_placeholder,
                     type = 2,
                     scaling = 0.5
 )
+
+graph_placeholder <- facet_RUC_decile_emissions_ethnicity(prawn_path = prawn_path,
+                                                     pollutant= pollutant,
+                                                     year=year)
+process_graph_saver(plot=graph_placeholder,
+                    filename = paste0("Outputs/Racial inequality/",
+                                      pollutant,
+                                      " emissions in ",
+                                      year,
+                                      "faceted by RUC, coloured by ethnicity, x decile.png"),
+                    file_format = "agg_png",
+                    type = 2,
+                    scaling = 0.5
+)
+
+graph_placeholder <- facet_RUC_deprivation_emissions_ethnicity(prawn_path = prawn_path,
+                                                          pollutant= pollutant,
+                                                          year=year)
+process_graph_saver(plot=graph_placeholder,
+                    filename = paste0("Outputs/Racial inequality/",
+                                      pollutant,
+                                      " emissions in ",
+                                      year,
+                                      "faceted by RUC, coloured by ethnicity, x deprivation.png"),
+                    file_format = "agg_png",
+                    type = 2,
+                    scaling = 0.5
+)
