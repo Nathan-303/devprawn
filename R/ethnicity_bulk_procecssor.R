@@ -48,3 +48,14 @@ process_graph_saver(plot=graph_placeholder,
                     type = 2,
                     scaling = 0.5
 )
+
+
+graph_placeholder <- facet_ethnicity_bar_deprivation(prawn_path = prawn_path,
+                                                    pollutant= pollutant,
+                                                    year=year)
+process_graph_saver(plot=graph_placeholder,
+                    filename = paste0("Outputs/Racial inequality/deprivation distribution for ethnicities.png"),
+                    file_format = "agg_png",
+                    type = 2,
+                    scaling = 0.5
+)
