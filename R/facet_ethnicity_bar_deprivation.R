@@ -73,24 +73,5 @@ output <- ggplot(data=plottable)+
   geom_col()+
   facet_wrap(~`Ethnic group`,scale="free_y")
 
-#facet by sources not ethnicity
-plottable2 <- plottable %>% dplyr::filter(`Ethnic group`%in%c("Black, Black British, Black\nWelsh, Caribbean or African",
-                                                              "White: English, Welsh, Scottish,\nNorthern Irish or British",
-                                                              "Asian, Asian British\nor Asian Welsh",
-                                                              "Mixed or Multiple\nethnic groups",
-                                                              "Other Mixed or\nMultiple ethnic groups"))
-output <- ggplot(data=plottable2)+
-  aes(x=IMD,y=avgems,colour=`Ethnic group`)+
-  geom_line()+
-  facet_wrap(~fct_reorder(Emission_source,avgems,.desc=TRUE),scale="free_y")+
-  scale_colour_manual(values=c("black","royalblue","olivedrab1","#FB8022FF","deeppink2"))+
-  theme_classic()+
-  scale_x_continuous(
-    breaks=c(1:10),
-    expand = expansion(mult=0,add=0),
-    minor_breaks = FALSE)+
-  labs(labs(y=bquote("Average"~.(pollutant)~"emissions/ tonnes "~km^"-2"),
-            x="IMD decile where 10 is least deprived"))
-
 output
 }
