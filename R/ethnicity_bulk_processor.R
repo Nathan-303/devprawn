@@ -1,5 +1,5 @@
 
-ethnicity_bulk_processor <- function{
+ethnicity_bulk_processor <- function(){
 library(PRAWNS)
 Startup()
 setwd("C:/Users/Nathan Gray/Documents/GitHub/Data-analysis-with-PRAWNS-demo")
