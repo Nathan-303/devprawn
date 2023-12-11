@@ -16,7 +16,7 @@
 #'   pollutant="NOx",
 #'   year=2019)
 
-facet_ethnicity_sources_weighted <- function(prawn_path,pollutant,year){
+facet_ethnicity_bar_deprivation <- function(prawn_path,pollutant,year){
 
 
   active_stack <- read.csv(file=prawn_path,
@@ -66,6 +66,12 @@ weightchunk <- inner_join(active_stack,edata,by=c("LSOA11CD"="geography code")) 
 
 plottable <- weightchunk %>%
   summarise(popsum=sum(flat_population),id=mean(groupid))
+
+output <- ggplot(data=plottable)+
+  aes(y=popsum,
+      x=IMD)+
+  geom_col()+
+  facet_wrap(~`Ethnic group`,scale="free_y")
 
 #facet by sources not ethnicity
 plottable2 <- plottable %>% dplyr::filter(`Ethnic group`%in%c("Black, Black British, Black\nWelsh, Caribbean or African",
