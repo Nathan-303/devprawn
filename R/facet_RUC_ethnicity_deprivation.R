@@ -16,7 +16,7 @@
 #'   pollutant="NOx",
 #'   year=2019)
 
-facet_ethnicity_RUC_weighted <- function(prawn_path,pollutant,year){
+facet_RUC_ethnicity_deprivation <- function(prawn_path,pollutant,year){
 active_stack <- read.csv(file=prawn_path,
                          check.names = FALSE,
                          row.names = 1)
@@ -94,11 +94,5 @@ output <- ggplot(data=plottable2)+
 
 output
 
-process_graph_saver(plot=last_plot(),
-                    filename = "testing123.png",
-                    file_format = "agg_png",
-                    type = 2,
-                    scaling = 0.7
-)
 
 }
