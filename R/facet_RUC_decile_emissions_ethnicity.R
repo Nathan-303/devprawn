@@ -134,7 +134,9 @@ output <- ggplot(data=plottable
   scale_x_continuous(
     breaks=c(1:10),
     expand = expansion(mult=0,add=0.1),
-    minor_breaks = FALSE)
+    minor_breaks = FALSE)+
+  labs(y=bquote("Average "~.(pollutant)~" emissions/ tonnes "~km^"-2"),
+       x="Population decile where 10 contains the highest percentage population")
 
 output
 
