@@ -114,7 +114,7 @@ output <- ggplot(data=plottable
     expand = expansion(mult=0,add=0),
     minor_breaks = FALSE)+
   
-  scale_y_continuous(expand = c(0, 0.6), limits = c(0, NA))+
+  scale_y_continuous(expand=expansion(mult=c(0,0.06),add=0), limits = c(0, NA))+
 
   labs(x=paste0("Decile where 10 contains the most people within the group"),
        y=bquote("Average "~.(pollutant)~"emissions in "~.(year)~"/ tonnes "~km^"-2"),

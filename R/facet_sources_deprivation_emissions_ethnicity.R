@@ -102,7 +102,7 @@ output <- ggplot(data=plottable)+
     breaks=c(1:10),
     expand = expansion(mult=0,add=0),
     minor_breaks = FALSE)+
-  scale_y_continuous(expand = c(0, 0.6), limits = c(0, NA))+
+  scale_y_continuous(expand=expansion(mult=c(0,0.06),add=0), limits = c(0, NA))+
   labs(y=bquote("Average "~.(pollutant)~" emissions/ tonnes "~km^"-2"),
             x="IMD decile where 10 is least deprived")
 
