@@ -1,4 +1,11 @@
-
+#' Run ethnicity graphs and save results
+#' @export
+#'
+#' @examples
+#' cartesian_ethnicity_groups_src(
+#'   prawn_path="PRAWN.csv",
+#'   pollutant="NOx",
+#'   year=2019)
 ethnicity_bulk_processor <- function(){
 library(PRAWNS)
 library(devprawn)
