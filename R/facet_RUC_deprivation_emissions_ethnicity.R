@@ -69,17 +69,13 @@ weightchunk <- inner_join(active_stack,edata,by=c("LSOA11CD"="geography code")) 
 
 plottable <- weightchunk %>%
   summarise(emsum=sum(weighted),popsum=sum(flat_population),id=mean(groupid)) %>%
-  mutate(avgems=emsum/popsum)
-
-
-
-#facet by RUC not ethnicity
-plottable2 <- plottable %>% dplyr::filter(`Ethnic group`%in%c("Black, Black British, Black\nWelsh, Caribbean or African",
+  mutate(avgems=emsum/popsum)%>% 
+  dplyr::filter(`Ethnic group`%in%c("Black, Black British, Black\nWelsh, Caribbean or African",
                                                               "White: English, Welsh, Scottish,\nNorthern Irish or British",
                                                               "Asian, Asian British\nor Asian Welsh",
                                                               "Mixed or Multiple\nethnic groups",
                                                               "Other Mixed or\nMultiple ethnic groups"))
-output <- ggplot(data=plottable2)+
+output <- ggplot(data=plottable)+
   aes(x=IMD,y=avgems,colour=`Ethnic group`)+
   geom_line()+
   facet_wrap(~fct_reorder(RUC11,avgems,.desc=TRUE),scale="free_y")+
@@ -89,6 +85,7 @@ output <- ggplot(data=plottable2)+
     breaks=c(1:10),
     expand = expansion(mult=0,add=0),
     minor_breaks = FALSE)+
+  scale_y_continuous(expand = c(0, 0.6), limits = c(0, NA))+
   labs(labs(y=bquote("Average"~.(pollutant)~"emissions/ tonnes "~km^"-2"),
             x="IMD decile where 10 is least deprived"))
 
