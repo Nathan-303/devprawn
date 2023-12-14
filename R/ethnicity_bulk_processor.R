@@ -1,10 +1,11 @@
 
 ethnicity_bulk_processor <- function(){
 library(PRAWNS)
+library(devprawn)
 Startup()
 setwd("C:/Users/Nathan Gray/Documents/GitHub/Data-analysis-with-PRAWNS-demo")
 prawn_path <-"NOx_emissions_in_2019_v0.13.3/PRAWN.csv"
-#prawn_path <-"PM 2.5_emissions_in_2019_v0.14.2/Londonless/PRAWN.csv"
+#prawn_path <-"PM 2.5_emissions_in_2019_v0.14.2/PRAWN.csv"
 pollutant <- "NOx"
 #pollutant <- "PM2.5"
 year <- 2019
@@ -23,7 +24,7 @@ process_graph_saver(plot=graph_placeholder,
                                       scaling = 0.5
                     )
 ##This function doesn't have a single output and is misleadingly named
-graph_placeholder <- facet_sources_ethnicity_deprivation(prawn_path = prawn_path,
+graph_placeholder <- facet_sources_deprivation_emissions_ethnicity(prawn_path = prawn_path,
                                                                         pollutant= pollutant,
                                                                         year=year)
 process_graph_saver(plot=graph_placeholder,
@@ -37,7 +38,7 @@ process_graph_saver(plot=graph_placeholder,
                     scaling = 0.5
 )
 
-graph_placeholder <- facet_sources_ethnicity_decile(prawn_path = prawn_path,
+graph_placeholder <- facet_sources_decile_emissions_ethnicity(prawn_path = prawn_path,
                                                          pollutant= pollutant,
                                                          year=year)
 process_graph_saver(plot=graph_placeholder,
