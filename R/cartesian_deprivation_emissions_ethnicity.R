@@ -153,8 +153,7 @@ output <- ggplot(data=indexed_data)+
                     values=c(4,6))+
 
   scale_colour_manual("the legend",
-                      values=c("black","royalblue","olivedrab1","#FB8022FF","deeppink2"),
-                      guide= guide_legend(override.aes = aes(colour="orange"))
+                      values=c("black","royalblue","olivedrab1","#FB8022FF","deeppink2")
   )+
 
   scale_shape_manual("the legend",
@@ -174,7 +173,8 @@ output <- ggplot(data=indexed_data)+
              rep("deeppink2",6)),
     alpha=1,
     shape=indexed_data$point_shape,
-    size=2)))+
+    size=2),
+    ncol=6))+
 
   #Plot the relationship between deprivation and emissions for the whole population
   geom_smooth(data=data,
