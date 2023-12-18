@@ -11,10 +11,10 @@ library(PRAWNS)
 library(devprawn)
 Startup()
 setwd("C:/Users/Nathan Gray/Documents/GitHub/Data-analysis-with-PRAWNS-demo")
-prawn_path <-"NOx_emissions_in_2019_v0.13.3/PRAWN.csv"
-#prawn_path <-"PM 2.5_emissions_in_2019_v0.14.2/PRAWN.csv"
-pollutant <- "NOx"
-#pollutant <- "PM2.5"
+#prawn_path <-"NOx_emissions_in_2019_v0.13.3/PRAWN.csv"
+prawn_path <-"PM 2.5_emissions_in_2019_v0.14.2/PRAWN.csv"
+#pollutant <- "NOx"
+pollutant <- "PM2.5"
 year <- 2019
 
 graph_placeholder <- cartesian_deprivation_emissions_ethnicity(prawn_path = prawn_path,
