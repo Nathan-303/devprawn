@@ -32,7 +32,11 @@ active_stack <- read.csv(file=prawn_path,
 long_stack <- active_stack %>% rename(`Other transport and \nmobile machinery`=`Other transport and mobile machinery`) %>%
   pivot_longer(
     cols=c("Domestic combustion",
-           "Other transport and \nmobile machinery","Road transport","Total","Other sources","Industry and\npoint sources"
+           "Other transport and \nmobile machinery",
+           "Road transport",
+           "Total",
+           "Other sources",
+           "Industry and\npoint sources"
     ),
     names_to = "Emission_source",
     values_to = "Emissions"
