@@ -19,7 +19,12 @@
 facet_RUC_deprivation_emissions_ethnicity <- function(prawn_path,pollutant,year){
 active_stack <- read.csv(file=prawn_path,
                          check.names = FALSE,
-                         row.names = 1)
+                         row.names = 1)%>%
+  mutate("Rural urban classification"=case_when(
+    RUC11=="Rural town and fringe in a sparse setting"~"Rural town and fringe",
+    RUC11=="Rural village and dispersed in a sparse setting"~ "Rural village and dispersed",
+    RUC11=="Urban city and town in a sparse setting"~"Urban city and town",
+    .default = RUC11))
   #removed lengthening, it can be put back in from facet sources if you want
 
 
@@ -63,13 +68,13 @@ edata <- read.csv("Data/LSOA_statistics/census2021-ts021-lsoa.csv",
 
 
 weightchunk <- inner_join(active_stack,edata,by=c("LSOA11CD"="geography code")) %>%
-  dplyr::select(LSOA11CD,`Ethnic group`,Total,IMD,flat_population,groupid,RUC11) %>%
-  group_by(`Ethnic group`,IMD,RUC11) %>%
+  dplyr::select(LSOA11CD,`Ethnic group`,Total,IMD,flat_population,groupid,RUC11,`Rural urban classification`) %>%
+  group_by(`Ethnic group`,IMD,`Rural urban classification`) %>%
   mutate(weighted=Total*flat_population)
 
 plottable <- weightchunk %>%
   summarise(emsum=sum(weighted),popsum=sum(flat_population),id=mean(groupid)) %>%
-  mutate(avgems=emsum/popsum)%>% 
+  mutate(avgems=emsum/popsum) %>%
   dplyr::filter(`Ethnic group`%in%c("Black, Black British, Black\nWelsh, Caribbean or African",
                                                               "White: English, Welsh, Scottish,\nNorthern Irish or British",
                                                               "Asian, Asian British\nor Asian Welsh",
@@ -78,7 +83,7 @@ plottable <- weightchunk %>%
 output <- ggplot(data=plottable)+
   aes(x=IMD,y=avgems,colour=`Ethnic group`)+
   geom_line()+
-  facet_wrap(~fct_reorder(RUC11,avgems,.desc=TRUE),scale="free_y")+
+  facet_wrap(~fct_reorder(`Rural urban classification`,avgems,.desc=TRUE),scale="free_y")+
   scale_colour_manual(values=c("black","royalblue","olivedrab1","#FB8022FF","deeppink2"))+
   theme_classic()+
   scale_x_continuous(
