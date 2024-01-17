@@ -76,7 +76,13 @@ edata <- read.csv("Data/LSOA_statistics/census2021-ts021-lsoa.csv",
                          "Mixed or Multiple ethnic groups",
                          "Other Mixed or Multiple ethnic groups"
     )~`Ethnic group`
-  ))
+  ))%>%
+  mutate(`Ethnic group`=case_when(
+    `Ethnic group`=="White: Irish"~"Minoritised white",
+    `Ethnic group`=="White: Gypsy or Irish Traveller"~ "Minoritised white",
+    `Ethnic group`=="White: Roma"~"Minoritised white",
+    `Ethnic group`=="White: Other White"~"Minoritised white",
+    .default = `Ethnic group`))
 
 
 weightchunk <- inner_join(long_stack,edata,by=c("LSOA11CD"="geography code")) %>%
@@ -88,16 +94,26 @@ plottable <- weightchunk %>%
   summarise(emsum=sum(weighted),popsum=sum(flat_population),id=mean(groupid)) %>%
   mutate(avgems=emsum/popsum)%>% 
   dplyr::filter(`Ethnic group`%in%c("Black, Black British, Black\nWelsh, Caribbean or African",
-                                                              "White: English, Welsh, Scottish,\nNorthern Irish or British",
-                                                              "Asian, Asian British\nor Asian Welsh",
-                                                              "Mixed or Multiple\nethnic groups",
-                                                              "Other Mixed or\nMultiple ethnic groups"))
+                                    "White: English, Welsh, Scottish,\nNorthern Irish or British",
+                                    "Asian, Asian British\nor Asian Welsh",
+                                    "Mixed or Multiple\nethnic groups",
+                                    "Other Mixed or\nMultiple ethnic groups",
+                                    "Minoritised white")) %>% 
+  mutate(linetype=case_when(
+    `Ethnic group`=="Minoritised white"~"dashed",
+    .default="straight"
+  ))
 output <- ggplot(data=plottable)+
-  aes(x=IMD,y=avgems,colour=`Ethnic group`)+
+  aes(x=IMD,y=avgems,colour=`Ethnic group`,linetype=linetype)+
   geom_line()+
   facet_wrap(~fct_reorder(Emission_source,avgems,.desc=TRUE),scale="free_y")+
-  scale_colour_manual(values=c("black","royalblue","olivedrab1","#FB8022FF","deeppink2"))+
+  scale_colour_manual(values=c("black","royalblue","deeppink2","olivedrab1","#FB8022FF","deeppink2"))+
   theme_classic()+
+  scale_linetype_manual(values=c(5,1),)+
+  guides(linetype="none",
+         colour=guide_legend(override.aes = 
+                               list(linetype=c(1,1,5,1,1,1)))
+  )+
   scale_x_continuous(
     breaks=c(1:10),
     expand = expansion(mult=0,add=0),
