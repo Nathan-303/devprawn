@@ -134,6 +134,7 @@ output <- ggplot(data=plottable
   theme(legend.position = "right",
         legend.key.width = unit(0.5,"cm"),
         legend.key.height = unit(1.3,"cm"))+
+  scale_linetype_manual(values=c(5,1),)+
 
   scale_colour_manual(values =c("black","royalblue","deeppink2","olivedrab1","#FB8022FF","deeppink2"))+
 
