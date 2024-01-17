@@ -34,6 +34,12 @@ edata <- read.csv("Data/LSOA_statistics/census2021-ts021-lsoa.csv",
          `Ethnic group: White`,
          `Other ethnic\ngroup`=
          `Ethnic group: Other ethnic group`
+         ) %>% 
+  mutate(`Minoritised white`=
+                    `Ethnic group: White: Irish`+
+                    `Ethnic group: White: Gypsy or Irish Traveller`+
+                    `Ethnic group: White: Roma`+
+                    `Ethnic group: White: Other White`
          ) %>%
   #Pivot the broadest subdivisions out
   pivot_longer(
@@ -42,7 +48,8 @@ edata <- read.csv("Data/LSOA_statistics/census2021-ts021-lsoa.csv",
       `Black, Black British, \nBlack Welsh, Caribbean\nor African`,
       `Mixed or Multiple \nethnic groups`,
       `White`,
-      `Other ethnic\ngroup`),
+      `Other ethnic\ngroup`,
+      `Minoritised white`),
     names_to = "Ethnic group",
     values_to = "flat population"
   ) %>%
@@ -83,7 +90,11 @@ plottable <- foray %>% inner_join(
                                "Solvents",
                                "Agricultural")) %>%
   group_by(`Ethnic group`,Diversity_quintile,Emission_source) %>%
-  summarise(Mean=mean(emissions))
+  summarise(Mean=mean(emissions))%>% 
+  mutate(linetype=case_when(
+    `Ethnic group`=="Minoritised white"~"dashed",
+    .default="straight"
+  ))
 
 
 
@@ -93,7 +104,7 @@ output <- ggplot(data=plottable
 
   aes(x=Diversity_quintile,
       y=Mean,
-      colour=`Ethnic group`)+
+      colour=`Ethnic group`,linetype=linetype)+
 
   geom_line(stat="summary",
             linewidth=0.75,
@@ -124,9 +135,13 @@ output <- ggplot(data=plottable
         legend.key.width = unit(0.5,"cm"),
         legend.key.height = unit(1.3,"cm"))+
 
-  scale_colour_manual(values =c("black","royalblue","olivedrab1","#FB8022FF","deeppink2"))+
+  scale_colour_manual(values =c("black","royalblue","deeppink2","olivedrab1","#FB8022FF","deeppink2"))+
 
-  guides(fill = guide_legend(byrow = TRUE))+
+  guides(fill = guide_legend(byrow = TRUE,
+                             ),
+         linetype="none",
+         colour=guide_legend(override.aes = 
+                               list(linetype=c(1,1,5,1,1,1))))+
 
   facet_wrap(~fct_reorder(Emission_source,Mean,mean,na.rm=TRUE,.desc=TRUE),
              scale="free_y")+
