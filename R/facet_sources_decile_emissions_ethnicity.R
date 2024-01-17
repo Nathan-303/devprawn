@@ -66,9 +66,25 @@ source_list_trimmer <- !(source_list %in% c("Offshore","Tot_area"))
 source_list <- source_list[source_list_trimmer]
 
 long_chunk <- data %>%
-  mutate(`Other sources`=`Waste treatment and disposal`+`Energy production`+Natural+Solvents+Agricultural) %>%
+  mutate(
+    "Industry and\npoint sources"=`Energy production`+`Industrial combustion`+`Industrial production`+`Point sources`,
+    "Other sources"=Solvents+Natural+Agricultural+`Waste treatment and disposal`) %>%
+  dplyr::select(!c(`Energy production`,
+             `Industrial combustion`,
+             `Industrial production`,
+             `Point sources`,
+             Solvents,
+             Natural,
+             Agricultural,
+             `Waste treatment and disposal`)) %>% 
   pivot_longer(
-    cols=all_of(c(source_list,"Point sources","Other sources")),
+    cols=c("Domestic combustion",
+                "Other transport and \nmobile machinery",
+                "Road transport",
+                "Total",
+                "Other sources",
+                "Industry and\npoint sources"
+    ),
     names_to = "Emission_source",
     values_to = "emissions")
 #Plot a faceted graph
