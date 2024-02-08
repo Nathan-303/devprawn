@@ -69,6 +69,7 @@ long_chunk <- data %>%
   mutate(
     "Industry and\npoint sources"=`Energy production`+`Industrial combustion`+`Industrial production`+`Point sources`,
     "Other sources"=Solvents+Natural+Agricultural+`Waste treatment and disposal`) %>%
+  rename("Other transport and \nmobile machinery"="Other transport and mobile machinery") %>% 
   dplyr::select(!c(`Energy production`,
              `Industrial combustion`,
              `Industrial production`,
