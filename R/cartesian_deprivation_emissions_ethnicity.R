@@ -33,10 +33,20 @@ edata <- read.csv("Data/LSOA_statistics/census2021-ts021-lsoa.csv",
 
   mutate(`Ethnic group`=str_sub(`Ethnic group`,start=14L))
 
-intermediate <- inner_join(data,edata,by=c("LSOA11CD"="geography code"))%>%
+intermediate <- inner_join(data,edata,by=c("LSOA21CD"="geography code"))%>%
 
   mutate(`Weighted emissions`= Total*flat_population,
          `Weighted deprivation`=IMD*flat_population)
+
+refcalc <- intermediate %>% dplyr::filter(`Ethnic group`==" White: English, Welsh, Scottish, Northern Irish or British") %>% 
+  group_by(IMD) %>% 
+  summarise(popsum=sum(flat_population),
+            emissions_sum=sum(`Weighted emissions`)) %>% 
+  mutate(emissions=emissions_sum/popsum)
+
+refmodel <- lm(emissions~IMD,
+               data=refcalc,
+               )
 
 
 weighted_data <- intermediate %>%
@@ -120,10 +130,13 @@ point_size=case_when(
 reference <- indexed_data %>% dplyr::filter(`Ethnic group`=="White: English, Welsh, Scottish,\nNorthern Irish or British") %>% 
   rename("majority"="Weighted emissions")
 
-# output_table <- indexed_data %>% mutate(majority=reference$majority) %>% 
-#   mutate(percentage=`Weighted emissions`/majority)
-# 
-# write.csv(x=output_table,file = paste0(pollutant,"emission averages.csv"))
+output_table <- indexed_data %>% mutate(majority=reference$majority,
+                                        scaled_white=`Weighted deprivation`*refmodel$coefficients[2]+
+                                          refmodel$coefficients[1]) %>%
+  mutate(percentage_up_major=`Weighted emissions`/majority,
+         percentage_scaled_major=`Weighted emissions`/scaled_white)
+
+#write.csv(x=output_table,file = paste0(pollutant,"emission averages.csv"))
 output <- ggplot(data=indexed_data)+
 
   #Set the standard variables
@@ -175,18 +188,15 @@ output <- ggplot(data=indexed_data)+
     shape=indexed_data$point_shape,
     size=2),
     ncol=6))+
-
-  #Plot the relationship between deprivation and emissions for the whole population
-  geom_smooth(data=data,
+  
+  geom_smooth(data=refcalc,
               inherit.aes = FALSE,
               aes(x=IMD,
-                  y=Total),
-              formula=y~x,
-              method="lm",
-              colour="pink",
+                  y=emissions),
+              colour="deeppink2",
               show.legend = FALSE,
               se = FALSE
-              )+
+  )+
 
   theme_classic()+
   labs(y=bquote("Average"~.(pollutant)~"emissions/ tonnes "~km^"-2"))+

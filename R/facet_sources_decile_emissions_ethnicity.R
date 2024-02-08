@@ -31,7 +31,7 @@ edata <- read.csv("Data/LSOA_statistics/census2021-ts021-lsoa.csv",
          `Mixed or Multiple \nethnic groups`=
          `Ethnic group: Mixed or Multiple ethnic groups`,
          `White`=
-         `Ethnic group: White`,
+           `Ethnic group: White: English, Welsh, Scottish, Northern Irish or British`,
          `Other ethnic\ngroup`=
          `Ethnic group: Other ethnic group`
          ) %>% 
@@ -98,7 +98,7 @@ foray <- edata %>%
 plottable <- foray %>% inner_join(
   x=long_chunk,
   y=foray,
-  by=c("LSOA11CD"="geography code")
+  by=c("LSOA21CD"="geography code")
 ) %>%
   filter(!Emission_source%in%c("Waste treatment and disposal",
                                "Energy production",
