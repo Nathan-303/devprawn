@@ -75,9 +75,9 @@ foray <- edata %>%
 
 
 plottable <- foray %>% inner_join(
-  x=data %>% dplyr::select(RUC11,Total,LSOA11CD),
+  x=data %>% dplyr::select(RUC11,Total,LSOA21CD),
   y=foray,
-  by=c("LSOA11CD"="geography code")
+  by=c("LSOA21CD"="geography code")
 ) %>%
   mutate("Rural urban classification"=case_when(
     RUC11=="Rural town and fringe in a sparse setting"~"Rural town and fringe",

@@ -100,7 +100,7 @@ foray <- edata %>%
 plottable <- foray %>% inner_join(
   x=long_chunk,
   y=foray %>% dplyr::select(`geography code`,`Ethnic group`,`flat population`,Percentage),
-  by=c("LSOA11CD"="geography code")
+  by=c("LSOA21CD"="geography code")
 ) %>%
   filter(!Emission_source%in%c("Waste treatment and disposal",
                                "Energy production",

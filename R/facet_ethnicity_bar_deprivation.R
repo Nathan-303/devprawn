@@ -61,7 +61,7 @@ edata <- read.csv("Data/LSOA_statistics/census2021-ts021-lsoa.csv",
   ))
 
 
-weightchunk <- inner_join(active_stack,edata,by=c("LSOA11CD"="geography code")) %>%
+weightchunk <- inner_join(active_stack,edata,by=c("LSOA21CD"="geography code")) %>%
   group_by(`Ethnic group`,IMD)
 
 plottable <- weightchunk %>%

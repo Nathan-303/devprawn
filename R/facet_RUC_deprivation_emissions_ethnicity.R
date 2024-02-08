@@ -73,7 +73,7 @@ edata <- read.csv("Data/LSOA_statistics/census2021-ts021-lsoa.csv",
     .default = `Ethnic group`))
 
 
-weightchunk <- inner_join(active_stack,edata,by=c("LSOA11CD"="geography code")) %>%
+weightchunk <- inner_join(active_stack,edata,by=c("LSOA21CD"="geography code")) %>%
   dplyr::select(LSOA11CD,`Ethnic group`,Total,IMD,flat_population,groupid,RUC11,`Rural urban classification`) %>%
   group_by(`Ethnic group`,IMD,`Rural urban classification`) %>%
   mutate(weighted=Total*flat_population)
