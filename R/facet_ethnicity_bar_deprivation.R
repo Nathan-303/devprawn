@@ -64,14 +64,26 @@ edata <- read.csv("Data/LSOA_statistics/census2021-ts021-lsoa.csv",
 weightchunk <- inner_join(active_stack,edata,by=c("LSOA21CD"="geography code")) %>%
   group_by(`Ethnic group`,IMD)
 
-plottable <- weightchunk %>%
-  summarise(popsum=sum(flat_population),id=mean(groupid))
+totalpop <- weightchunk %>% 
+  group_by(`Ethnic group`) %>% 
+  summarise(total=sum(flat_population))
 
-output <- ggplot(data=plottable)+
-  aes(y=popsum,
+plottable <- weightchunk %>%
+  summarise(popsum=sum(flat_population),id=mean(groupid)) %>% 
+  inner_join(totalpop,by="Ethnic group")%>% 
+  mutate(percentage=popsum/total)
+
+output <- ggplot(data=plottable %>% dplyr::filter(`Ethnic group`!="Total: All usual residents"))+
+  aes(y=percentage,
       x=IMD)+
   geom_col()+
-  facet_wrap(~`Ethnic group`,scale="free_y")
+  facet_wrap(~fct_reorder(`Ethnic group`,id,.desc=FALSE))+
+  scale_x_continuous(
+    breaks=c(1:10),
+    expand = expansion(mult=0,add=0),
+    minor_breaks = FALSE)+
+  labs(x="IMD decile where 1 is most deprived",
+       y="Percentage of population")
 
 output
 }
