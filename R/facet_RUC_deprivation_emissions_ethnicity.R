@@ -90,7 +90,9 @@ plottable <- weightchunk %>%
   mutate(linetype=case_when(
     `Ethnic group`=="Minoritised white"~"dashed",
     .default="straight"
-  ))
+  ))%>% 
+  dplyr::filter(`Rural urban classification`!="mismatch")
+
 output <- ggplot(data=plottable)+
   aes(x=IMD,y=avgems,colour=`Ethnic group`,linetype=linetype)+
   geom_line()+

@@ -71,14 +71,15 @@ quantile_bounds <- edata %>% summarise(Decile=rep(c(1:10),by=5),
 foray <- edata %>%
   mutate(Diversity_quintile = ntile(x=Percentage,
                                     n=10)) %>%
-  group_by(`Ethnic group`,Diversity_quintile)
+  group_by(`Ethnic group`,Diversity_quintile) 
 
 
 plottable <- foray %>% inner_join(
   x=data %>% dplyr::select(RUC11,Total,LSOA21CD),
   y=foray,
   by=c("LSOA21CD"="geography code")
-) %>%
+) %>% 
+  dplyr::filter(RUC11!="mismatch") %>% 
   mutate("Rural urban classification"=case_when(
     RUC11=="Rural town and fringe in a sparse setting"~"Rural town and fringe",
     RUC11=="Rural village and dispersed in a sparse setting"~ "Rural village and dispersed",
