@@ -136,7 +136,7 @@ output_table <- indexed_data %>% mutate(majority=reference$majority,
   mutate(percentage_up_major=`Weighted emissions`/majority,
          percentage_scaled_major=`Weighted emissions`/scaled_white)
 
-#write.csv(x=output_table,file = paste0(pollutant,"emission averages.csv"))
+write.csv(x=output_table,file = paste0(pollutant,"emission averages.csv"))
 output <- ggplot(data=indexed_data)+
 
   #Set the standard variables
