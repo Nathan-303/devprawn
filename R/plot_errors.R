@@ -34,16 +34,99 @@ edata <- read.csv("Data/LSOA_statistics/census2021-ts021-lsoa.csv",
   mutate(`Ethnic group`=str_sub(`Ethnic group`,start=14L))
 
 intermediate <- inner_join(data,edata,by=c("LSOA21CD"="geography code"))%>%
+  # mutate(Total=case_when(
+  #   Total>80~80,
+  #   .default = Total
+  # )) %>%
 
   mutate(`Weighted emissions`= Total*flat_population,
-         `Weighted deprivation`=IMD*flat_population)
+         `Weighted deprivation`=IMD*flat_population) %>% 
+  
+  dplyr::filter(`Ethnic group`==" White: English, Welsh, Scottish, Northern Irish or British") 
+  
+quantiles <- intermediate %>% group_by(IMD) %>% 
+  summarise(LQ=Quantile(x=Total,
+                        weights=flat_population,
+                        probs=0.25),
+            Median=Quantile(x=Total,
+                        weights=flat_population,
+                        probs=0.5),
+            UQ=Quantile(x=Total,
+                        weights=flat_population,
+                        probs=0.75),
+            top=Quantile(x=Total,
+                        weights=flat_population,
+                        probs=0.95),
+            bottom=Quantile(x=Total,
+                        weights=flat_population,
+                        probs=0.05),
+            bigmeanie=Mean(x=Total,
+                        weights=flat_population)
+  )
+
+quantplot <- ggplot(data=quantiles)+
+  aes(x=IMD)+
+  geom_boxplot(aes(
+    x=as.factor(IMD),
+    group=as.factor(IMD),
+    lower=LQ,
+    middle=Median,
+    upper=UQ,
+    ymin=bottom,
+    ymax=top),
+    stat="identity")+
+  geom_point(aes(
+    y=bigmeanie))+
+  
+  geom_smooth(data=refcalc,
+              inherit.aes=FALSE,
+              method="lm",
+              formula=y~x,
+              aes(x=IMD,
+                  y=emissions),
+              colour="deeppink2",
+              show.legend = FALSE,
+              se = FALSE
+  )+
+  labs(x="IMD decile where 1 is most deprived",
+       y=bquote(.(pollutant)~" emissions / tonnes "~km^"-2"))
+
+quantplot
 
 refcalc <- intermediate %>% dplyr::filter(`Ethnic group`==" White: English, Welsh, Scottish, Northern Irish or British") %>% 
   group_by(IMD) %>% 
   summarise(popsum=sum(flat_population),
-            emissions_sum=sum(`Weighted emissions`)) %>% 
+            emissions_sum=sum(`Weighted emissions`),
+            deviation=sd(`Weighted emissions`)) %>% 
   mutate(emissions=emissions_sum/popsum)
 
+
+deviation <- intermediate %>% inner_join(refcalc,by="IMD") %>% 
+  mutate(deltasquid=(Total-emissions)^2) %>% 
+  mutate(heavysquid=deltasquid*flat_population) %>% 
+  group_by(IMD) %>% 
+  summarise(allsquid=sum(heavysquid),
+            popsum=mean(popsum)) %>% 
+  mutate(stev=(allsquid/popsum)^0.5)
+
+for(index in c(1:10)){
+  slice <- intermediate %>% dplyr::filter(`Ethnic group`==" White: English, Welsh, Scottish, Northern Irish or British") %>% 
+    dplyr::filter(IMD==index)
+  
+  value <- weightedMedian(x=slice$Total,
+                 w=slice$flat_population)
+  
+  meds <- tibble(IMD=index,
+                 median=value)
+  
+  if(!exists("medtable")){
+    medtable <- meds
+  }else{
+    medtable <- rbind(meds,medtable)
+  }
+
+  rbind(meds,medtable)
+}
 refmodel <- lm(emissions~IMD,
                data=refcalc,
                )
