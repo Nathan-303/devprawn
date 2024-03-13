@@ -148,6 +148,14 @@ output <- ggplot(data=indexed_data)+
   # This one is for setting the legend without breaking the plot
   geom_point(alpha=0,stroke=2
   )+
+  
+  geom_smooth(data=data,
+              aes(x=IMD,
+                  y=Total),
+              inherit.aes = FALSE,
+              method="lm",
+              formula=y~x,
+              se=FALSE)+
 
   #Plot the data with the aesthetics wanted
   geom_point(aes(x=`Weighted deprivation`,

@@ -18,7 +18,7 @@ setwd("C:/Users/Nathan Gray/Documents/GitHub/Data-analysis-with-PRAWNS-demo")
 pollutant <- "NOx"
 
 year <- 2019
-prawn_path <-paste0("2021_",pollutant,".csv")
+prawn_path <-paste0(year,"_",pollutant,".csv")
 
 graph_placeholder <- cartesian_deprivation_emissions_ethnicity(prawn_path = prawn_path,
                                                    pollutant= pollutant,
