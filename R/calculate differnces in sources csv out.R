@@ -24,34 +24,31 @@ data <- read.csv(prawn_path,
 edata <- read.csv("Data/LSOA_statistics/census2021-ts021-lsoa.csv",
                   check.names=FALSE,
                   sep="|") %>%
-  rename(`Asian, Asian British or\nAsian Welsh`=
+  rename(`Asian, Asian British or Asian Welsh`=
            `Ethnic group: Asian, Asian British or Asian Welsh`,
-         `Black, Black British, \nBlack Welsh, Caribbean\nor African` =
+         `Black, Black British,  Black Welsh, Caribbean or African` =
          `Ethnic group: Black, Black British, Black Welsh, Caribbean or African`,
-         `Mixed or Multiple \nethnic groups`=
+         `Mixed or Multiple  ethnic groups`=
          `Ethnic group: Mixed or Multiple ethnic groups`,
-         `White: English, Welsh, Scottish,\nNorthern Irish or British`=
+         `White: English, Welsh, Scottish, Northern Irish or British`=
            `Ethnic group: White: English, Welsh, Scottish, Northern Irish or British`,
-         `Other ethnic\ngroup`=
+         `Other ethnic group`=
          `Ethnic group: Other ethnic group`
          ) %>% 
   mutate(`Minoritised white`=
                     `Ethnic group: White: Irish`+
                     `Ethnic group: White: Gypsy or Irish Traveller`+
                     `Ethnic group: White: Roma`+
-                    `Ethnic group: White: Other White`,
-         minorities=`Ethnic group: Total: All usual residents`-`White: English, Welsh, Scottish,\nNorthern Irish or British`
-         ) %>%
+                    `Ethnic group: White: Other White`) %>%
   #Pivot the broadest subdivisions out
   pivot_longer(
     cols=c(
-      `Asian, Asian British or\nAsian Welsh`,
-      `Black, Black British, \nBlack Welsh, Caribbean\nor African`,
-      `Mixed or Multiple \nethnic groups`,
-      `White: English, Welsh, Scottish,\nNorthern Irish or British`,
-      `Other ethnic\ngroup`,
-      `Minoritised white`,
-      minorities),
+      `Asian, Asian British or Asian Welsh`,
+      `Black, Black British,  Black Welsh, Caribbean or African`,
+      `Mixed or Multiple  ethnic groups`,
+      `White: English, Welsh, Scottish, Northern Irish or British`,
+      `Other ethnic group`,
+      `Minoritised white`),
     names_to = "Ethnic group",
     values_to = "flat population"
   ) %>%
@@ -67,9 +64,9 @@ source_list_trimmer <- !(source_list %in% c("Offshore","Tot_area"))
 
 source_list <- source_list[source_list_trimmer]
 
-long_chunk <- data %>% rename("Other transport and \nmobile machinery"="Other transport and mobile machinery") %>% 
+long_chunk <- data %>% rename("Other transport and  mobile machinery"="Other transport and mobile machinery") %>% 
   mutate(
-    "Industry and\npoint sources"=`Energy production`+`Industrial combustion`+`Industrial production`+`Point sources`,
+    "Industry and point sources"=`Energy production`+`Industrial combustion`+`Industrial production`+`Point sources`,
     "Other sources"=Solvents+Natural+Agricultural+`Waste treatment and disposal`) %>%
   dplyr::select(!c(`Energy production`,
              `Industrial combustion`,
@@ -81,11 +78,11 @@ long_chunk <- data %>% rename("Other transport and \nmobile machinery"="Other tr
              `Waste treatment and disposal`)) %>% 
   pivot_longer(
     cols=c("Domestic combustion",
-                "Other transport and \nmobile machinery",
+                "Other transport and  mobile machinery",
                 "Road transport",
                 "Total",
                 "Other sources",
-                "Industry and\npoint sources"
+                "Industry and point sources"
     ),
     names_to = "Emission_source",
     values_to = "emissions")
@@ -112,11 +109,8 @@ plottable <- foray %>% inner_join(
   summarise(totalems=sum(polpop),totalpop=sum(`flat population`)) %>% 
   mutate(scalems=totalems/totalpop)
 
-csvbit <- plottable %>% dplyr::filter(Emission_source!="Total") %>% 
-  dplyr::select(!c(totalems,totalpop,scalems,delta,wholepie)
-)
 
-segment <- plottable %>% filter(`Ethnic group`=="White: English, Welsh, Scottish,\nNorthern Irish or British") %>% 
+segment <- plottable %>% filter(`Ethnic group`=="White: English, Welsh, Scottish, Northern Irish or British") %>% 
   rename("majority"="scalems") %>% 
   ungroup() %>% 
   dplyr::select(Emission_source,majority) %>% 
@@ -129,20 +123,22 @@ percentagegrabber <- inner_join(segment,
                                   rename("wholepie"="delta") %>% 
                                   dplyr::select(`Ethnic group`,wholepie),
                                 by="Ethnic group") %>% 
-  mutate(percentage=delta/wholepie)
+  mutate(percentage=signif(delta/wholepie,4))
 
 csvbit <- percentagegrabber %>% dplyr::filter(Emission_source!="Total") %>% 
   dplyr::select(!c(totalems,totalpop,scalems,delta,wholepie,majority)
   ) %>% 
   pivot_wider(names_from = Emission_source,
-              values_from = percentage)
+              values_from = percentage) %>% 
+  dplyr::filter(`Ethnic group`!="White: English, Welsh, Scottish, Northern Irish or British")
+  
 ggplot(data=percentagegrabber %>% filter(Emission_source!="Total"))+
   geom_bar(aes(colour=Emission_source,
                y=percentage))+
   facet_wrap(~`Ethnic group`)
 
 ggplot(data=percentagegrabber %>% filter(Emission_source!="Total",
-                                         `Ethnic group`!="White: English, Welsh, Scottish,\nNorthern Irish or British"))+
+                                         `Ethnic group`!="White: English, Welsh, Scottish, Northern Irish or British"))+
   
   geom_point(aes(x=`Ethnic group`,
                  y=percentage,
@@ -157,7 +153,7 @@ write.csv(x=csvbit,
 
 dataout <- inner_join(plottable,
                       plottable %>% 
-                        dplyr::filter(`Ethnic group`=="White: English, Welsh, Scottish,\nNorthern Irish or British") %>% 
+                        dplyr::filter(`Ethnic group`=="White: English, Welsh, Scottish, Northern Irish or British") %>% 
                         rename("base"="Mean") %>% 
                         ungroup() %>% 
                         dplyr::select(!`Ethnic group`),

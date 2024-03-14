@@ -6,18 +6,12 @@
 #'   prawn_path="PRAWN.csv",
 #'   pollutant="NOx",
 #'   year=2019)
-ethnicity_bulk_processor <- function(){
-library(PRAWNS)
-library(devprawn)
-Startup()
-setwd("C:/Users/Nathan Gray/Documents/GitHub/Data-analysis-with-PRAWNS-demo")
+ethnicity_bulk_processor <- function(year,pollutant){
+
 
 # prawn_path <-"NOx_emissions_in_2019_v0.13.3/PRAWN.csv"
 # pollutant <- "NOx"
 
-pollutant <- "NOx"
-
-year <- 2019
 prawn_path <-paste0(year,"_",pollutant,".csv")
 
 graph_placeholder <- cartesian_deprivation_emissions_ethnicity(prawn_path = prawn_path,
