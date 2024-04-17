@@ -16,7 +16,8 @@
 #'   pollutant="NOx",
 #'   year=2019)
 
-cartesian_deprivation_emissions_ethnicity <- function(prawn_path,pollutant,year){
+cartesian_error_plotter<- function(prawn_path,pollutant,year){
+  library(DescTools)
 data <- read.csv(prawn_path,
                  row.names=1,
                  check.names=FALSE)
@@ -63,6 +64,12 @@ quantiles <- intermediate %>% group_by(IMD) %>%
             bigmeanie=Mean(x=Total,
                         weights=flat_population)
   )
+refcalc <- intermediate %>% dplyr::filter(`Ethnic group`==" White: English, Welsh, Scottish, Northern Irish or British") %>% 
+  group_by(IMD) %>% 
+  summarise(popsum=sum(flat_population),
+            emissions_sum=sum(`Weighted emissions`),
+            deviation=sd(`Weighted emissions`)) %>% 
+  mutate(emissions=emissions_sum/popsum)
 
 quantplot <- ggplot(data=quantiles)+
   aes(x=IMD)+
@@ -93,12 +100,6 @@ quantplot <- ggplot(data=quantiles)+
 
 quantplot
 
-refcalc <- intermediate %>% dplyr::filter(`Ethnic group`==" White: English, Welsh, Scottish, Northern Irish or British") %>% 
-  group_by(IMD) %>% 
-  summarise(popsum=sum(flat_population),
-            emissions_sum=sum(`Weighted emissions`),
-            deviation=sd(`Weighted emissions`)) %>% 
-  mutate(emissions=emissions_sum/popsum)
 
 
 deviation <- intermediate %>% inner_join(refcalc,by="IMD") %>% 
