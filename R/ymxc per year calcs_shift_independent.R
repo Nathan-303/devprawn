@@ -86,7 +86,7 @@ out
 process_graph_saver(plot=out,
                     filename = paste0("Outputs/",
                                       pollutant,
-                                      " percentage inequality between 1 and 10 over time_setFgeoms.png"),
+                                      " absolute inequality between 1 and 10 over time_setFgeoms2.png"),
                     file_format = "agg_png",
                     type = 2,
                     scaling = 0.6)
