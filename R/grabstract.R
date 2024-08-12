@@ -69,11 +69,11 @@ edata <- read.csv("Data/LSOA_statistics/census2021-ts021-lsoa.csv",
   mutate(`Ethnic group`=str_trim(`Ethnic group`,"left")) %>%
 
   mutate(`Ethnic group`=case_when(
-    `Ethnic group`=="Black, Black British, Black Welsh, Caribbean or African"~"Black, Black British, Black\nWelsh, Caribbean or African",
-    `Ethnic group`=="White: English, Welsh, Scottish, Northern Irish or British"~"White: English, Welsh, Scottish,\nNorthern Irish or British",
-    `Ethnic group`=="Asian, Asian British or Asian Welsh"~"Asian, Asian British\nor Asian Welsh",
+    `Ethnic group`=="Black, Black British, Black Welsh, Caribbean or African"~"Black",
+    `Ethnic group`=="White: English, Welsh, Scottish, Northern Irish or British"~"Majority white",
+    `Ethnic group`=="Asian, Asian British or Asian Welsh"~"Asian",
     `Ethnic group`=="Mixed or Multiple ethnic groups"~"Mixed or Multiple\nethnic groups",
-    `Ethnic group`=="Other Mixed or Multiple ethnic groups"~"Other Mixed or\nMultiple ethnic groups",
+    `Ethnic group`=="Other Mixed or Multiple ethnic groups"~"Other ethnic group",
     !`Ethnic group`%in%c("Black, Black British, Black Welsh, Caribbean or African",
                          "White: English, Welsh, Scottish, Northern Irish or British",
                          "Asian, Asian British or Asian Welsh",
@@ -97,34 +97,38 @@ weightchunk <- inner_join(long_stack,edata,by=c("LSOA11CD"="geography code")) %>
 plottable <- weightchunk %>%
   summarise(emsum=sum(weighted),popsum=sum(flat_population),id=mean(groupid)) %>%
   mutate(avgems=emsum/popsum)%>% 
-  dplyr::filter(`Ethnic group`%in%c("Black, Black British, Black\nWelsh, Caribbean or African",
-                                    "White: English, Welsh, Scottish,\nNorthern Irish or British",
-                                    "Asian, Asian British\nor Asian Welsh",
+  dplyr::filter(`Ethnic group`%in%c("Black",
+                                    "Majority white",
+                                    "Asian",
                                     "Mixed or Multiple\nethnic groups",
-                                    "Other Mixed or\nMultiple ethnic groups",
+                                    "Other ethnic group",
                                     "Minoritised white")) %>% 
   mutate(linetype=case_when(
     `Ethnic group`=="Minoritised white"~"dashed",
     .default="straight"
   ))
-output <- ggplot(data=plottable)+
+output <- ggplot(data=plottable %>% dplyr::filter(Emission_source=="Total"))+
   aes(x=IMD,y=avgems,colour=`Ethnic group`,linetype=linetype)+
   geom_line()+
-  facet_wrap(~fct_reorder(Emission_source,avgems,.desc=TRUE),scale="free_y")+
-  scale_colour_manual(values=c("black","royalblue","deeppink2","olivedrab1","#FB8022FF","deeppink2"))+
+  scale_colour_manual(values=c("black","royalblue","deeppink2","deeppink2","olivedrab1","#FB8022FF"))+
   theme_classic()+
   scale_linetype_manual(values=c(5,1),)+
   guides(linetype="none",
          colour=guide_legend(override.aes = 
-                               list(linetype=c(1,1,5,1,1,1)))
+                               list(linetype=c(1,1,1,5,1,1)))
   )+
   scale_x_continuous(
     breaks=c(1:10),
     expand = expansion(mult=0,add=0),
     minor_breaks = FALSE)+
   scale_y_continuous(expand=expansion(mult=c(0,0.06),add=0), limits = c(0, NA))+
-  labs(y=bquote("Average "~.(pollutant)~" emissions/ tonnes "~km^"-2"),
-            x="IMD decile where 10 is least deprived")
+  labs(y=bquote(.(pollutant)~" emissions / tonnes "~km^"-2"),
+            x="Socioeconomic deprivation (IMD) where 10 is least deprived")
 
 output
+
+process_graph_saver(plot = output,
+                    filename = "graphical_abstract.png",
+                    file_format = "agg_png",
+                    type = "custom",scaling = 0.8)
 }
