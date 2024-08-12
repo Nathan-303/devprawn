@@ -22,10 +22,10 @@ process_graph_saver(plot=graph_placeholder,
                     filename = paste0("Outputs/Racial inequality/",
                                       pollutant," emissions in ",
                                       year,
-                                      "weighted by ethnicity.png"),
+                                      "weighted by ethnicity_posterver.png"),
                                       file_format = "agg_png",
-                                      type = 2,
-                                      scaling = 0.5
+                                      type = "custom",
+                                      scaling = 0.65
                     )
 ##This function doesn't have a single output and is misleadingly named
 graph_placeholder <- facet_sources_deprivation_emissions_ethnicity(prawn_path = prawn_path,
@@ -36,10 +36,10 @@ process_graph_saver(plot=graph_placeholder,
                                       pollutant,
                                       " emissions in ",
                                       year,
-                                      "faceted by source, coloured by ethnicity, x deprivation.png"),
+                                      "faceted by source, coloured by ethnicity, x deprivation_posterver.png"),
                     file_format = "agg_png",
-                    type = 2,
-                    scaling = 0.5
+                    type = "custom_pos2",
+                    scaling = 0.9
 )
 
 graph_placeholder <- facet_sources_decile_emissions_ethnicity(prawn_path = prawn_path,
