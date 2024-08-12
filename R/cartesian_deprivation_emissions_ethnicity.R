@@ -33,7 +33,7 @@ edata <- read.csv("Data/LSOA_statistics/census2021-ts021-lsoa.csv",
 
   mutate(`Ethnic group`=str_sub(`Ethnic group`,start=14L))
 
-intermediate <- inner_join(data,edata,by=c("LSOA21CD"="geography code"))%>%
+intermediate <- inner_join(data,edata,by=c("LSOA11CD"="geography code"))%>%
 
   mutate(`Weighted emissions`= Total*flat_population,
          `Weighted deprivation`=IMD*flat_population)
@@ -112,6 +112,7 @@ point_size=case_when(
     `Ethnic group`=="White: English, Welsh, Scottish, Northern Irish or British"~"White: English, Welsh, Scottish,\nNorthern Irish or British",
     `Ethnic group`=="Asian, Asian British or Asian Welsh"~"Asian, Asian British\nor Asian Welsh",
     `Ethnic group`=="Mixed or Multiple ethnic groups"~"Mixed or Multiple\nethnic groups",
+    `Ethnic group`=="White: Gypsy or Irish Traveller"~"White: Gypsy or Irish\nTraveller",
     `Ethnic group`=="Other Mixed or Multiple ethnic groups"~"Other Mixed or\nMultiple ethnic groups",
     !`Ethnic group`%in%c("Black, Black British, Black Welsh, Caribbean or African",
                          "White: English, Welsh, Scottish, Northern Irish or British",
@@ -186,7 +187,8 @@ output <- ggplot(data=indexed_data)+
 
 
   #Set the display parameters for the legend
-  scale_fill_viridis_d("Ethnic\ngroup",guide=guide_legend(override.aes = list(
+  scale_fill_viridis_d(
+    guide=guide_legend(override.aes = list(
     colour=c(rep("black",6),
              rep("royalblue",4),
              rep("olivedrab1",5),
@@ -227,7 +229,8 @@ output <- ggplot(data=indexed_data)+
 
   theme_classic()+
   labs(y=bquote("Average"~.(pollutant)~"emissions/ tonnes "~km^"-2"))+
-  theme(legend.position="bottom")+
+  theme(legend.position="bottom",
+        legend.title=element_blank())+
   expand_limits(y=0)+
   scale_y_continuous(expand = expansion(mult = c(0, .095)))+
   scale_x_continuous(expand=c(0,0))
