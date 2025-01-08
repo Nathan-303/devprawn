@@ -10,7 +10,8 @@ setlinks <- read.csv(file="Data/Historic_stats/YearIMDCensus.csv")
 raster_list <- list()
 #A vecort with a year from each set used
 years <- c(2005,2007,2009,2013,2016,2020)
-for(index in c(1:6)){
+#c(1:6) to do everything, 2 was bugged
+for(index in c(2)){
   year <- years[index]
   chosenset <- setlinks %>% dplyr::filter(Year==year)
 
@@ -79,21 +80,32 @@ for(index in c(1:6)){
   }
 }
 #plot the changes over time
-for(index in c(1:5)){
-  placeholder <- raster_list[[index+1]]-raster_list[[index]]
+for(index in c(2)){
   
-  IMDchange <- ggplot()+
-    
-    geom_spatraster(data=placeholder,
+  IMDcheck <- ggplot()+
+    geom_spatraster(data=raster_list[[index]],
                     aes(fill=IMD))+
     scale_fill_gradient2()
-  
-  process_graph_saver(plot=IMDchange,
+  # placeholder <- raster_list[[index+1]]-raster_list[[index]]
+  # 
+  # IMDchange <- ggplot()+
+  #   
+  #   geom_spatraster(data=placeholder,
+  #                   aes(fill=IMD))+
+  #   scale_fill_gradient2()
+  # 
+  process_graph_saver(plot=IMDcheck,
                       filename = paste0("The change in IMD from set ",
                                         letters[index],
                                         " to ",
                                         letters[index+1],
                                         ".png"),file_format = "agg_png",type = 3,scaling = 1)
 }
+
+IMDcheck <- ggplot()+
+  geom_spatraster(data=filtered_shapefile,
+                  aes(fill=IMD))+
+  scale_fill_gradient2()
+
 
 }
